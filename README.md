@@ -48,8 +48,10 @@ In vscode set the username/password credentials via the PowerQuery SDK toolbox.
      # Execute with parameters matching your installed versions
      .\create_embedded_driver_link_path.ps1 -SDKVersion "0.4.0-win32-arm64" -SDKToolsVersion "2.127.3"
      ```
+4. **Set working directory** 
+Set the working directory in SnowflakeConnector.query.pq as instructed.
 
-4. **Connector Configuration**  
+5. **Connector Configuration**  
    Populate `config.json` with your server and warehouse details:
    ```json
    {

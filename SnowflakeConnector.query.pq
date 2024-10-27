@@ -1,6 +1,6 @@
 ﻿let
-    // Load JSON configuration from file
-    jsonFilePath = "config.json",
+    // Load JSON configuration from file - be sure to edit this
+    jsonFilePath = "C:\\path\\to\\config.json",
     jsonContent = Text.FromBinary(File.Contents(jsonFilePath)),
     jsonConfig = Json.Document(jsonContent),
 
