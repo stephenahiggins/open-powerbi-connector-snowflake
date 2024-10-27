@@ -80,3 +80,11 @@ The Open Power BI connector for Snowflake builds on the default capabilities to 
 
        // Call Snowflake.Database with sourced parameters
        result = Snowflake
+## References
+https://github.com/ClickHouse/power-bi-clickhouse
+https://github.com/microsoft/DataConnectors/tree/master/samples/ODBC/SnowflakeODBC
+https://github.com/microsoft/DataConnectors/tree/master/samples/NativeQuery/ODBC/SQL%20ODBC/Finish
+
+## CAUTION
+
+This connector is provided without warranty, and I assume no liability for any issues arising from its use. Note that enabling this connector will replace the default Snowflake connector in the Power BI interface, thereby disabling access to the built-in connector.
