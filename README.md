@@ -1,4 +1,5 @@
 <p align="center">
+   <img src="https://github.com/dcrdev/open-powerbi-connector-snowflake/actions/workflows/build.yml/badge.svg" alt="Build"> &nbsp;<img src="https://github.com/dcrdev/open-powerbi-connector-snowflake/actions/workflows/build_and_release.yml/badge.svg" alt="Build and Release"><br /><br />
   <img src="./static/snowflake.png" width="200px" alt="Snowflake Logo">
   <img src="./static/powerbi.svg" width="200px" alt="Power BI Logo">
   <h1 align="center">Open Snowflake Connector for Power BI</h1>
