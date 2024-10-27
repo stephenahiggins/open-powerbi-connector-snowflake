@@ -5,8 +5,6 @@
   <h1 align="center">Open Snowflake Connector for Power BI</h1>
 </p>
 
-## Overview
-
 The Open Power BI connector for Snowflake builds on the default capabilities to support the `username_password_mfa` authenticator by default, reducing multi-factor authentication prompts for a streamlined experience. The connector also includes advanced ODBC driver settings to support flexible configuration.
 
 <p align="center">
