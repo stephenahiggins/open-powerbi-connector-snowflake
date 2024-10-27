@@ -80,6 +80,50 @@ The Open Power BI connector for Snowflake builds on the default capabilities to 
 
        // Call Snowflake.Database with sourced parameters
        result = Snowflake
+## Connector Options
+
+The following options allow customisation of the connector for tailored use. Options are divided into `Main`, `Config`, and `Options` sections to support complex connection needs.
+
+### Main Parameters
+
+| **Parameter**    | **Description**                                        | **Type** | **Example**                                | **Required** |
+|------------------|--------------------------------------------------------|----------|--------------------------------------------|--------------|
+| `server`         | Snowflake server URL.                                  | Text     | `contoso.snowflakecomputing.com`           | Yes          |
+| `warehouse`      | Snowflake warehouse for the session.                   | Text     | `CONTOSO_WH`                               | Yes          |
+| `config`         | Nested configuration object for advanced settings.     | Record   | See `Config Parameters` below              | No           |
+
+### Config Parameters
+
+| **Parameter**                | **Description**                                        | **Type** | **Example**                   | **Default** |
+|------------------------------|--------------------------------------------------------|----------|--------------------------------|-------------|
+| `roleName`                   | Specifies a custom role for the session.               | Text     | `DEV_ROLE`                     | `null`      |
+| `commandTimeout`             | Command execution timeout in seconds.                  | Number   | `120`                          | `null`      |
+| `connectionTimeout`          | Timeout for server connection in seconds.              | Number   | `30`                           | `null`      |
+| `includeRelationshipColumns` | Toggle for relationship columns (Not yet implemented). | Logical  | `true`                         | `false`     |
+| `database`                   | Default database to use for the session.               | Text     | `MY_DATABASE`                  | `null`      |
+| `options`                    | Nested `options` record for advanced driver settings.  | Record   | See `Options Parameters` below | `null`      |
+
+### Options Parameters
+
+Advanced driver parameters set under the `options` key in `Config`.
+
+| **Parameter**                | **Description**                                                                                                       | **Type**  | **Default**  | **Constraints**                                                                          |
+|------------------------------|-----------------------------------------------------------------------------------------------------------------------|-----------|--------------|-----------------------------------------------------------------------------------------|
+| `token`                      | OAuth token when using `authenticator=oauth`.                                                                         | Text      | `null`       | Required if `authenticator=oauth`.                                                      |
+| `schema`                     | Default schema for the session.                                                                                       | Text      | `public`     | Any valid schema name.                                                                  |
+| `CABundleFile`               | Path to CA bundle file for SSL verification.                                                                          | Text      | `null`       | Valid file path if specified.                                                           |
+| `client_config_file`         | Path to logging config file.                                                                                          | Text      | `null`       | Valid file path if specified.                                                           |
+| `CURLVerboseMode`            | Enables CURL verbose logging for diagnostics.                                                                         | Logical   | `false`      | `true`, `false`.                                                                        |
+| `DisableOCSPCheck`           | Disables OCSP check for SSL.                                                                                          | Logical   | `false`      | `true`, `false`.                                                                        |
+| `EnableAutoIpdByDefault`     | Enables SQL_ATTR_ENABLE_AUTO_IPD compatibility.                                                                       | Logical   | `true`       | `true`, `false`.                                                                        |
+| `get_size_threshold`         | File size threshold (MB) for multi-part downloads.                                                                    | Number    | `5`          | Positive integers.                                                                      |
+| `LogLevel`                   | Log level (0=Off, 1=Fatal, 2=Error, 3=Warning, 4=Info, 5=Debug, 6=Trace).                                            | Number    | `4`          | Integer between 0 and 6.                                                                |
+| `Proxy`                      | Proxy server in `<host>:<port>` format.                                                                               | Text      | `null`       | Valid format if specified.                                                              |
+| `BROWSER_RESPONSE_TIMEOUT`   | Timeout (in seconds) for browser-based authentication responses.                                                     | Number    | `120`        | Positive integers.                                                                      |
+| `CLIENT_SESSION_KEEP_ALIVE`  | Keeps session active despite inactivity.                                                                              | Logical   | `false`      | `true`, `false`.                                                                        |
+| `retryTimeout`               | Maximum time (seconds) to wait before error after HTTP request retries.                                               | Number    | `300`        | Positive integers.                                                                      |
+| `validateSessionParam`       | Validates `database`, `schema`, `warehouse`; rejects connection if parameters are invalid and set to true.            | Logical   | `false`      | `true`, `false`.                                                                        |
+
 ## References
 https://github.com/ClickHouse/power-bi-clickhouse
 https://github.com/microsoft/DataConnectors/tree/master/samples/ODBC/SnowflakeODBC
