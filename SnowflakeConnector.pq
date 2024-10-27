@@ -1,4 +1,4 @@
-﻿[Version = "100.0.0"]
+﻿[Version = "100.0.3"]
 section Snowflake;
 
 // When set to true, additional trace information will be written out to the User log.
