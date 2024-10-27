@@ -22,7 +22,8 @@ The Open Power BI connector for Snowflake builds on the default capabilities to 
 
 ## Limitations
 
-- **Custom (Native) Query**: Not supported (yet). See: [Issue #2](https://github.com/dcrdev/open-powerbi-connector-snowflake/issues/2)
+- **EntraId**: Supports OAuth but not EntraId (sad face)
+- ~~**Custom (Native) Query**: Not supported (yet). See: [Issue #2](https://github.com/dcrdev/open-powerbi-connector-snowflake/issues/2)~~
 - **Compatibility with PowerBI.com**: Requires a manual edit in your PBIX file. See: [Issue #1](https://github.com/dcrdev/open-powerbi-connector-snowflake/issues/1)
 
 ## Installation
