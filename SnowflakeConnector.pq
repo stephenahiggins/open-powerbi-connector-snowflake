@@ -711,7 +711,7 @@ Snowflake = [
 
 // Data Source UI publishing description
 Snowflake.Publish = [
-    Beta = false,
+    Beta = true,
     Category = "Database",
     ButtonText = {Extension.LoadString("ButtonTitle"), Extension.LoadString("ButtonHelp")},
     LearnMoreUrl = "https://learn.microsoft.com/en-us/power-query/connectors/snowflake",
