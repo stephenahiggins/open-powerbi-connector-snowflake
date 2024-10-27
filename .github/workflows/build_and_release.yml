@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up NuGet
         uses: nuget/setup-nuget@v2
@@ -24,7 +24,7 @@ jobs:
           ./nuget_packages/Microsoft.PowerQuery.SdkTools.2.127.3/tools/MakePQX.exe compile
 
       - name: Upload compiled extension
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: open-powerbi-connector-snowflake-${{ github.ref_name }}.mez
           path: ./bin/AnyCPU/Debug/open-powerbi-connector-snowflake.mez
@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Download compiled extension
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: open-powerbi-connector-snowflake-${{ github.ref_name }}.mez
           path: ./release/artifacts
