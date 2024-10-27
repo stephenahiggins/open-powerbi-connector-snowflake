@@ -1,7 +1,7 @@
 <p align="center">
   <img src="./static/snowflake.png" width="200px" alt="Snowflake Logo">
   <img src="./static/powerbi.svg" width="200px" alt="Power BI Logo">
-  <h1 align="center">Enhanced Snowflake Connector for Power BI</h1>
+  <h1 align="center">Open Snowflake Connector for Power BI</h1>
 </p>
 
 ## Overview
