@@ -55,7 +55,7 @@ The Open Power BI connector for Snowflake builds on the default capabilities to 
      ```
 
 4. **Connector Configuration**  
-   Update the `SnowflakeConnector.query.pq` file with your server and warehouse details:
+   Update the `SnowflakeConnector.query.pq.example` file with your server and warehouse details and then rename to `SnowflakeConnector.query.pq`:
    ```m
    let
        // Set server and warehouse directly in the script
