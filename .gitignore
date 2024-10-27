@@ -402,8 +402,6 @@ FodyWeavers.xsd
 *.iws
 *.ipr
 
-/config.json
-
 .DS_Store
-
+#SnowflakeConnector.query.pq
 /static/PBIT.*
