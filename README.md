@@ -103,7 +103,7 @@ The following options allow customisation of the connector for tailored use. Opt
 
 ### Options Parameters
 
-Advanced driver parameters set under the `options` key in `Config`.
+Advanced driver parameters set under the `options` key in `Config`. See https://github.com/dcrdev/open-powerbi-connector-snowflake/blob/988d7b9c8996cc20ee72a049c4ecf65498eec883/SnowflakeConnector.pq#L149 for full details.
 
 | **Parameter**                | **Description**                                                                                                       | **Type**  | **Default**  | **Constraints**                                                                          |
 |------------------------------|-----------------------------------------------------------------------------------------------------------------------|-----------|--------------|-----------------------------------------------------------------------------------------|
