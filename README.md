@@ -8,6 +8,11 @@
 
 The Open Power BI connector for Snowflake builds on the default capabilities to support the `username_password_mfa` authenticator by default, reducing multi-factor authentication prompts for a streamlined experience. The connector also includes advanced ODBC driver settings to support flexible configuration.
 
+<p align="center">
+  <img src="./static/demo.gif" width="600px" height="551px" alt="Demo Video">
+</p>
+
+
 ## Key Features
 
 - **Hooks into the PowerBI OEM Snowflake Driver**: No need to install or update additional drivers.
@@ -73,13 +78,4 @@ The Open Power BI connector for Snowflake builds on the default capabilities to 
        ],
 
        // Call Snowflake.Database with sourced parameters
-       result = Snowflake.Database(
-           server,
-           warehouse,
-           config
-       )
-   in
-       result
-## CAUTION
-
-This connector is provided without warranty, and I assume no liability for any issues arising from its use. Note that enabling this connector will replace the default Snowflake connector in the Power BI interface, thereby disabling access to the built-in connector.
+       result = Snowflake
