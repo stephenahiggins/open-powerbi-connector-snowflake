@@ -1,0 +1,30 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up NuGet
+        uses: nuget/setup-nuget@v2
+
+      - name: Install Power Query SDK
+        run: |
+          nuget install Microsoft.PowerQuery.SdkTools -Version 2.127.3 -OutputDirectory ./nuget_packages
+
+      - name: Compile Connector
+        run: |
+          ./nuget_packages/Microsoft.PowerQuery.SdkTools.2.127.3/tools/MakePQX.exe compile
+
+      - name: Upload compiled extension
+        uses: actions/upload-artifact@v3
+        with:
+          name: open-powerbi-connector-snowflake-${{ github.sha }}.mez
+          path: ./bin/AnyCPU/Debug/open-powerbi-connector-snowflake.mez

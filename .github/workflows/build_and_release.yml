@@ -1,0 +1,52 @@
+name: Build and Release
+
+on: 
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up NuGet
+        uses: nuget/setup-nuget@v2
+
+      - name: Install Power Query SDK
+        run: |
+          nuget install Microsoft.PowerQuery.SdkTools -Version 2.127.3 -OutputDirectory ./nuget_packages
+
+      - name: Compile Connector
+        run: |
+          ./nuget_packages/Microsoft.PowerQuery.SdkTools.2.127.3/tools/MakePQX.exe compile
+
+      - name: Upload compiled extension
+        uses: actions/upload-artifact@v3
+        with:
+          name: open-powerbi-connector-snowflake-${{ github.ref_name }}.mez
+          path: ./bin/AnyCPU/Debug/open-powerbi-connector-snowflake.mez
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Download compiled extension
+        uses: actions/download-artifact@v3
+        with:
+          name: open-powerbi-connector-snowflake-${{ github.ref_name }}.mez
+          path: ./release/artifacts
+
+      - name: Publish release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "./release/artifacts/*.mez"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ github.ref_name }}
+          body: "Full Changelog: https://github.com/dcrdev/open-powerbi-connector-snowflake/commits/${{ github.ref }}"
+          prerelease: true
