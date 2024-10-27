@@ -74,7 +74,6 @@ The Open Power BI connector for Snowflake builds on the default capabilities to 
            connectionTimeout = null,                   // Optional connection timeout
            includeRelationshipColumns = null,          // Optional include relationship columns
            database = null,                            // Optional database
-           sqlStatement = null,                        // Optional SQL statement
            options = options                           // Additional options
        ],
 
