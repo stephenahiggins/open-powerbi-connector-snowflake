@@ -108,12 +108,6 @@ ConfigType = type [
         Documentation.FieldCaption = "Database",
         Documentation.SampleValues = {"DEMO_DB"}
     ]),
-    optional sqlStatement = (type text meta [
-        Documentation.FieldCaption = "SQL Statement",
-        Documentation.FieldDescription = "Supports only top-level queries and subqueries; CTEs are not supported.",
-        Documentation.SampleValues = {"sele..."},
-        Formatting.IsMultiLine = true
-    ]),
     optional options = (type text meta [
         Documentation.FieldCaption = "Options",
         Documentation.FieldDescription = "Additional connection string options separated by semicolon",
@@ -537,13 +531,9 @@ DatabaseCoreImplementation = (
             defaultConfig[SqlCapabilities] & [
                 // Place custom overrides here
                 FractionalSecondsScale = 3,
-                MaxParameters = 50
-            ] & 
-            (if config <> null and Record.HasFields(config, "sqlStatement") and (Text.Trim(config[sqlStatement]) <> "" and config[sqlStatement] <> null) then
-                // Handle passthrough to the mashup engine if a sql command is provided
-                [Sql92Translation = "Passthrough"]
-            else
-                [])
+                MaxParameters = 50,
+                Sql92Translation = "Passthrough" // Always enable passthrough
+            ]
         ),
         // Please refer to the ODBC specification for SQLGetInfo properties and values.
         // https://github.com/Microsoft/ODBC-Specification/blob/master/Windows/inc/sqlext.h
