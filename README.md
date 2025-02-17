@@ -55,7 +55,7 @@ The Open Power BI connector for Snowflake builds on the default capabilities to 
      ```
 
 4. **Connector Configuration**  
-   Update the `SnowflakeConnector.query.pq.example` file with your server and warehouse details and then rename to `SnowflakeConnector.query.pq`:
+   Update the `ArborConnector.query.pq.example` file with your server and warehouse details and then rename to `ArborConnector.query.pq`:
    ```m
    let
        // Set server and warehouse directly in the script
@@ -103,7 +103,7 @@ The following options allow customisation of the connector for tailored use. Opt
 
 ### Options Parameters
 
-Advanced driver parameters set under the `options` key in `Config`. See [ValidOptionsMap](https://github.com/dcrdev/open-powerbi-connector-snowflake/blob/988d7b9c8996cc20ee72a049c4ecf65498eec883/SnowflakeConnector.pq#L149) for full details.
+Advanced driver parameters set under the `options` key in `Config`. See [ValidOptionsMap](https://github.com/dcrdev/open-powerbi-connector-snowflake/blob/988d7b9c8996cc20ee72a049c4ecf65498eec883/ArborConnector.pq#L149) for full details.
 
 | **Parameter**                | **Description**                                                                                                       | **Type**  | **Default**  | **Constraints**                                                                          |
 |------------------------------|-----------------------------------------------------------------------------------------------------------------------|-----------|--------------|-----------------------------------------------------------------------------------------|

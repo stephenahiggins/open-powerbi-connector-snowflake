@@ -1,5 +1,5 @@
 ﻿[Version = "100.0.3"]
-section Snowflake;
+section Arbor;
 
 // When set to true, additional trace information will be written out to the User log.
 // This should be set to false before release. Tracing is done through a call to
@@ -31,7 +31,7 @@ Config_DriverName = "Simba Snowflake ODBC Driver";
 //
 Config_SqlConformance = ODBC[SQL_SC][SQL_SC_SQL92_FULL];
 // Snowflake supports "LIMIT <take> [OFFSET <skip>]". While supported in the documented grammar,
-// using OFFSET without LIMIT produces a syntax error so we can't use LimitClauseKind.LimitOffset.               
+// using OFFSET without LIMIT produces a syntax error so we can't use LimitClauseKind.LimitOffset.
 //
 // LimitClauseKind.Limit (LIMIT only, OFFSET not supported)
 // ---------------------
@@ -79,71 +79,86 @@ Config_UseCastInsteadOfConvert = true;
 //
 Config_EnableDirectQuery = true;
 
-[DataSource.Kind = "Snowflake", Publish = "Snowflake.Publish"]
-shared Snowflake.Database = Value.ReplaceType(DatabaseCoreImplementation, DatabaseType);
+[DataSource.Kind = "Arbor", Publish = "Arbor.Publish"]
+shared Arbor.Database = Value.ReplaceType(DatabaseCoreImplementation, DatabaseType);
 
 ConfigType = type [
-    optional roleName = (type text meta [
-        Documentation.FieldCaption = "Specify a text value to use as Role name",
-        Documentation.SampleValues = {"abc"}
-    ]),
-    optional commandTimeout = (type number meta [
-        Documentation.FieldCaption = "Command timeout in seconds",
-        Documentation.SampleValues = {123}
-    ]),
-    optional connectionTimeout = (type number meta [
-        Documentation.FieldCaption = "Connection timeout in seconds",
-        Documentation.SampleValues = {123}
-    ]),
-    optional includeRelationshipColumns = (type logical meta [
-        Documentation.FieldCaption = "Include relationship columns",
-        Documentation.FieldDescription = "Not implemented",
-        Documentation.SampleValues = {true}
-    ]),
-    optional database = (type text meta [
-        Documentation.FieldCaption = "Database",
-        Documentation.SampleValues = {"DEMO_DB"}
-    ]),
-    optional options = (type text meta [
-        Documentation.FieldCaption = "Options",
-        Documentation.FieldDescription = "Additional connection string options separated by semicolon",
-        Documentation.SampleValues = {"LogFileSize=20971520;maxHttpRetries=7","LogFileSize=20971520"}
-    ])
+    optional roleName = (
+        type text meta [
+            Documentation.FieldCaption = "Specify a text value to use as Role name",
+            Documentation.SampleValues = {"abc"}
+        ]
+    ),
+    optional commandTimeout = (
+        type number meta [
+            Documentation.FieldCaption = "Command timeout in seconds",
+            Documentation.SampleValues = {123}
+        ]
+    ),
+    optional connectionTimeout = (
+        type number meta [
+            Documentation.FieldCaption = "Connection timeout in seconds",
+            Documentation.SampleValues = {123}
+        ]
+    ),
+    optional includeRelationshipColumns = (
+        type logical meta [
+            Documentation.FieldCaption = "Include relationship columns",
+            Documentation.FieldDescription = "Not implemented",
+            Documentation.SampleValues = {true}
+        ]
+    ),
+    optional database = (
+        type text meta [
+            Documentation.FieldCaption = "Database",
+            Documentation.SampleValues = {"DEMO_DB"}
+        ]
+    ),
+    optional options = (
+        type text meta [
+            Documentation.FieldCaption = "Options",
+            Documentation.FieldDescription = "Additional connection string options separated by semicolon",
+            Documentation.SampleValues = {"LogFileSize=20971520;maxHttpRetries=7", "LogFileSize=20971520"}
+        ]
+    )
 ];
 
 // Documenting the function
 DatabaseType = type function (
-    server as (type text meta [
-        Documentation.FieldCaption = "Server",
-        Documentation.SampleValues = {"contoso.snowflakecomputing.com"}
-    ]),
-    warehouse as (type text meta [
-        Documentation.FieldCaption = "Warehouse",
-        Documentation.SampleValues = {"CONTOSO_WH"}
-    ]),
+    server as (
+        type text meta [
+            Documentation.FieldCaption = "Server",
+            Documentation.SampleValues = {"xs48132.eu-west-2.aws.snowflakecomputing.com"}
+        ]
+    ),
+    warehouse as (
+        type text meta [
+            Documentation.FieldCaption = "Warehouse",
+            Documentation.SampleValues = {"POWER_BI_GENERAL"}
+        ]
+    ),
     optional config as (ConfigType meta [
         Documentation.FieldCaption = "Advanced options"
     ])
 ) as table meta [
-    Documentation.Name = "Snowflake",
-    Documentation.LongDescription = "Snowflake ODBC connector for Power Query",
-    Documentation.Examples = {[
-        Description = "Returns a navigation table with list of Snowflake tables that can be folded",
-        Code = "Snowflake.Database(""https://app.snowflake.com"")"
-    ]}
+    Documentation.Name = "Arbor Snowflake",
+    Documentation.LongDescription = "Arbor Snowflake Driver",
+    Documentation.Examples = {
+        [
+            Description = "Returns a navigation table with list of Snowflake tables that can be folded",
+            Code = "Arbor.Database(""https://app.snowflake.com"")"
+        ]
+    }
 ];
 
-DatabaseCoreImplementation = (
-    server as text,
-    warehouse as text,
-    optional config as record
-) => let
+DatabaseCoreImplementation = (server as text, warehouse as text, optional config as record) =>
+    let
         // Many data sources accept an optional 'options' record that allows users to change
         // default behaviors about the connection, such as connection timeout. Use this map
         // to define the appropriate options for your ODBC Driver. If you do not want to support
         // an options record, remove the ValidOptionsMap variable and options parameter from
         // the data source function.
-        // 
+        //
         // More details regarding the driver options can be found at https://docs.snowflake.com/en/developer-guide/odbc/odbc-parameters
         //
         ValidOptionsMap = #table(
@@ -332,7 +347,9 @@ DatabaseCoreImplementation = (
                     type nullable text,
                     "Authenticator for verifying user credentials, options: snowflake, externalbrowser, Okta URL, oauth, username_password_mfa.",
                     "username_password_mfa",
-                    each _ = null or List.Contains({"snowflake", "externalbrowser", "oauth", "username_password_mfa"}, _)
+                    each
+                        _ = null
+                        or List.Contains({"snowflake", "externalbrowser", "oauth", "username_password_mfa"}, _)
                 },
                 {
                     "default_binary_size",
@@ -434,10 +451,8 @@ DatabaseCoreImplementation = (
                 }
             }
         ),
-        
         ValidatedOptions = ValidateOptions(
-            if config <> null and Record.HasFields(config, "options") then config[options] else [],
-            ValidOptionsMap
+            if config <> null and Record.HasFields(config, "options") then config[options] else [], ValidOptionsMap
         ),
         //
         // Connection string settings
@@ -445,11 +460,9 @@ DatabaseCoreImplementation = (
         ConnectionString = [
             // At minimum you need to specify the ODBC Driver to use.
             Driver = Config_DriverName,
-
             // Replicating the options set by the official connector
             application = "Mashup Engine",
             UseCurrentCatalog = 1,
-
             // Specify custom properties for your ODBC Driver here.
             // The fields below are appropriate for the SQL Server ODBC Driver. The
             // names might be different for your data source.
@@ -457,11 +470,14 @@ DatabaseCoreImplementation = (
             Warehouse = warehouse,
             Role = if config <> null and Record.HasFields(config, "roleName") then config[roleName] else null,
             Database = if config <> null and Record.HasFields(config, "database") then config[database] else null,
-
-            login_timeout = if config <> null and Record.HasFields(config, "connectionTimeout") then config[connectionTimeout] else null,
-            query_timeout = if config <> null and Record.HasFields(config, "commandTimeout") then config[commandTimeout] else null,
-
-
+            login_timeout = if config <> null and Record.HasFields(config, "connectionTimeout") then
+                config[connectionTimeout]
+            else
+                null,
+            query_timeout = if config <> null and Record.HasFields(config, "commandTimeout") then
+                config[commandTimeout]
+            else
+                null,
             // These fields come from the options record, so they might be null.
             // A later step will strip all null values from the connection string.
             #"CABundleFile" = ValidatedOptions[CABundleFile]?,
@@ -490,22 +506,95 @@ DatabaseCoreImplementation = (
             #"put_maxretries" = ValidatedOptions[put_maxretries]?,
             #"put_tempdir" = ValidatedOptions[put_tempdir]?,
             #"token" = ValidatedOptions[token]?,
-
             // Fix for poorly documented driver documentation on types
-            #"CURLVerboseMode" = if ValidatedOptions[CURLVerboseMode]? = true then 1 else if ValidatedOptions[CURLVerboseMode]? = false then 0 else null,
-            #"DisableOCSPCheck" = if ValidatedOptions[DisableOCSPCheck]? = true then 1 else if ValidatedOptions[DisableOCSPCheck]? = false then 0 else null,
-            #"EnableAutoIpdByDefault" = if ValidatedOptions[EnableAutoIpdByDefault]? = true then 1 else if ValidatedOptions[EnableAutoIpdByDefault]? = false then 0 else null,
-            #"EnablePidLogFileNames" = if ValidatedOptions[EnablePidLogFileNames]? = true then 1 else if ValidatedOptions[EnablePidLogFileNames]? = false then 0 else null,
-            #"KeepLeadingTrailingZeros" = if ValidatedOptions[KeepLeadingTrailingZeros]? = true then 1 else if ValidatedOptions[KeepLeadingTrailingZeros]? = false then 0 else null,
-            #"NoExecuteInSQLPrepare" = if ValidatedOptions[NoExecuteInSQLPrepare]? = true then 1 else if ValidatedOptions[NoExecuteInSQLPrepare]? = false then 0 else null,
-            #"CLIENT_OUT_OF_BAND_TELEMETRY_ENABLED" = if ValidatedOptions[CLIENT_OUT_OF_BAND_TELEMETRY_ENABLED]? = true then 1 else if ValidatedOptions[CLIENT_OUT_OF_BAND_TELEMETRY_ENABLED]? = false then 0 else null,
-            #"CLIENT_SESSION_KEEP_ALIVE" = if ValidatedOptions[CLIENT_SESSION_KEEP_ALIVE]? = true then 1 else if ValidatedOptions[CLIENT_SESSION_KEEP_ALIVE]? = false then 0 else null,
-            #"disableSamlUrlCheck" = if ValidatedOptions[disableSamlUrlCheck]? = true then 1 else if ValidatedOptions[disableSamlUrlCheck]? = false then 0 else null,
-            #"allowEmptyProxy" = if ValidatedOptions[allowEmptyProxy]? = true then 1 else if ValidatedOptions[allowEmptyProxy]? = false then 0 else null,
-            #"odbc_use_standard_timestamp_columnsize" = if ValidatedOptions[odbc_use_standard_timestamp_columnsize]? = true then 1 else if ValidatedOptions[odbc_use_standard_timestamp_columnsize]? = false then 0 else null,
-            #"passcodeInPassword" = if ValidatedOptions[passcodeInPassword]? = true then 1 else if ValidatedOptions[passcodeInPassword]? = false then 0 else null,
-            #"put_fastfail" = if ValidatedOptions[put_fastfail]? = true then 1 else if ValidatedOptions[put_fastfail]? = false then 0 else null,
-            #"validateSessionParam" = if ValidatedOptions[validateSessionParam]? = true then 1 else if ValidatedOptions[validateSessionParam]? = false then 0 else null
+            #"CURLVerboseMode" = if ValidatedOptions[CURLVerboseMode]? = true then
+                1
+            else if ValidatedOptions[CURLVerboseMode]? = false then
+                0
+            else
+                null,
+            #"DisableOCSPCheck" = if ValidatedOptions[DisableOCSPCheck]? = true then
+                1
+            else if ValidatedOptions[DisableOCSPCheck]? = false then
+                0
+            else
+                null,
+            #"EnableAutoIpdByDefault" = if ValidatedOptions[EnableAutoIpdByDefault]? = true then
+                1
+            else if ValidatedOptions[EnableAutoIpdByDefault]? = false then
+                0
+            else
+                null,
+            #"EnablePidLogFileNames" = if ValidatedOptions[EnablePidLogFileNames]? = true then
+                1
+            else if ValidatedOptions[EnablePidLogFileNames]? = false then
+                0
+            else
+                null,
+            #"KeepLeadingTrailingZeros" = if ValidatedOptions[KeepLeadingTrailingZeros]? = true then
+                1
+            else if ValidatedOptions[KeepLeadingTrailingZeros]? = false then
+                0
+            else
+                null,
+            #"NoExecuteInSQLPrepare" = if ValidatedOptions[NoExecuteInSQLPrepare]? = true then
+                1
+            else if ValidatedOptions[NoExecuteInSQLPrepare]? = false then
+                0
+            else
+                null,
+            #"CLIENT_OUT_OF_BAND_TELEMETRY_ENABLED" = if
+                ValidatedOptions[CLIENT_OUT_OF_BAND_TELEMETRY_ENABLED]? = true
+            then
+                1
+            else if ValidatedOptions[CLIENT_OUT_OF_BAND_TELEMETRY_ENABLED]? = false then
+                0
+            else
+                null,
+            #"CLIENT_SESSION_KEEP_ALIVE" = if ValidatedOptions[CLIENT_SESSION_KEEP_ALIVE]? = true then
+                1
+            else if ValidatedOptions[CLIENT_SESSION_KEEP_ALIVE]? = false then
+                0
+            else
+                null,
+            #"disableSamlUrlCheck" = if ValidatedOptions[disableSamlUrlCheck]? = true then
+                1
+            else if ValidatedOptions[disableSamlUrlCheck]? = false then
+                0
+            else
+                null,
+            #"allowEmptyProxy" = if ValidatedOptions[allowEmptyProxy]? = true then
+                1
+            else if ValidatedOptions[allowEmptyProxy]? = false then
+                0
+            else
+                null,
+            #"odbc_use_standard_timestamp_columnsize" = if
+                ValidatedOptions[odbc_use_standard_timestamp_columnsize]? = true
+            then
+                1
+            else if ValidatedOptions[odbc_use_standard_timestamp_columnsize]? = false then
+                0
+            else
+                null,
+            #"passcodeInPassword" = if ValidatedOptions[passcodeInPassword]? = true then
+                1
+            else if ValidatedOptions[passcodeInPassword]? = false then
+                0
+            else
+                null,
+            #"put_fastfail" = if ValidatedOptions[put_fastfail]? = true then
+                1
+            else if ValidatedOptions[put_fastfail]? = false then
+                0
+            else
+                null,
+            #"validateSessionParam" = if ValidatedOptions[validateSessionParam]? = true then
+                1
+            else if ValidatedOptions[validateSessionParam]? = false then
+                0
+            else
+                null
         ],
         //
         // Handle credentials
@@ -515,21 +604,21 @@ DatabaseCoreImplementation = (
         // handled here as an example.
         //
         Credential = Extension.CurrentCredential(),
-        CredentialConnectionString =
-                [UID = Credential[Username], PWD = Credential[Password]],
-          
+        CredentialConnectionString = [UID = Credential[Username], PWD = Credential[Password]],
         //
         // Configuration options for the call to Odbc.DataSource
         //
         defaultConfig = Diagnostics.LogValue("BuildOdbcConfig", BuildOdbcConfig()),
         SqlCapabilities = Diagnostics.LogValue(
-            "SqlCapabilities_Options", 
-            defaultConfig[SqlCapabilities] & [
-                // Place custom overrides here
-                FractionalSecondsScale = 3,
-                MaxParameters = 50,
-                Sql92Translation = "Passthrough" // Always enable passthrough
-            ]
+            "SqlCapabilities_Options",
+            defaultConfig[SqlCapabilities]
+                & [
+                    // Place custom overrides here
+                    FractionalSecondsScale = 3,
+                    MaxParameters = 50,
+                    Sql92Translation = "Passthrough"
+                    // Always enable passthrough
+                ]
         ),
         // Please refer to the ODBC specification for SQLGetInfo properties and values.
         // https://github.com/Microsoft/ODBC-Specification/blob/master/Windows/inc/sqlext.h
@@ -542,7 +631,8 @@ DatabaseCoreImplementation = (
                     // not be required for your data source.
                     SQL_SQL92_PREDICATES = ODBC[SQL_SP][All],
                     SQL_AGGREGATE_FUNCTIONS = ODBC[SQL_AF][All],
-                    SQL_CONVERT_FUNCTIONS = 0x00000002 // Tell PowerBI that Snowflake uses cast and not convert
+                    SQL_CONVERT_FUNCTIONS = 0x00000002
+                    // Tell PowerBI that Snowflake uses cast and not convert
                 ]
         ),
         // SQLGetTypeInfo can be specified in two ways:
@@ -617,71 +707,80 @@ DatabaseCoreImplementation = (
         ConnectionStringNoNulls = Record.SelectFields(
             ConnectionString, Table.SelectRows(Record.ToTable(ConnectionString), each [Value] <> null)[Name]
         ),
-        OdbcDatasource = try Odbc.DataSource(
-            ConnectionStringNoNulls,
-            [
-                AstVisitor = [
-                    Constant = let
-                        Quote = each Text.Format("'#{0}'", {_}),
-                        Cast = (value, typeName) => [
-                            Text = Text.Format("CAST(#{0} as #{1})", {value, typeName})
+        OdbcDatasource =
+            try
+                Odbc.DataSource(
+                    ConnectionStringNoNulls,
+                    [
+                        AstVisitor = [
+                            Constant = let
+                                Quote = each Text.Format("'#{0}'", {_}),
+                                Cast = (value, typeName) =>
+                                    [
+                                        Text = Text.Format("CAST(#{0} as #{1})", {value, typeName})
+                                    ],
+                                Visitor = [
+                                    // This is to work around parameters being converted to VARCHAR
+                                    // and to work around driver crash when using TYPE_TIME parameters.
+                                    NUMERIC = each Cast(_, "NUMERIC"),
+                                    DECIMAL = each Cast(_, "DECIMAL"),
+                                    INTEGER = each Cast(_, "INTEGER"),
+                                    FLOAT = each Cast(_, "FLOAT"),
+                                    REAL = each Cast(_, "REAL"),
+                                    DOUBLE = each Cast(_, "DOUBLE"),
+                                    DATE = each Cast(Quote(Date.ToText(_, "yyyy-MM-dd")), "DATE"),
+                                    TIMESTAMP = each
+                                        Cast(Quote(DateTime.ToText(_, "yyyy-MM-dd HH:mm:ss.sssssss")), "TIMESTAMP"),
+                                    TIME = each Cast(Quote(Time.ToText(_, "HH:mm:ss.sssssss")), "TIME")
+                                ]
+                            in
+                                (typeInfo, ast) =>
+                                    Record.FieldOrDefault(Visitor, typeInfo[TYPE_NAME], each null)(ast[Value])
                         ],
-                        Visitor = [
-                            // This is to work around parameters being converted to VARCHAR
-                            // and to work around driver crash when using TYPE_TIME parameters.
-                            NUMERIC = each Cast(_, "NUMERIC"),
-                            DECIMAL = each Cast(_, "DECIMAL"),
-                            INTEGER = each Cast(_, "INTEGER"),
-                            FLOAT = each Cast(_, "FLOAT"),
-                            REAL = each Cast(_, "REAL"),
-                            DOUBLE = each Cast(_, "DOUBLE"),
-                            DATE = each Cast(Quote(Date.ToText(_, "yyyy-MM-dd")), "DATE"),
-                            TIMESTAMP = each Cast(Quote(DateTime.ToText(_, "yyyy-MM-dd HH:mm:ss.sssssss")), "TIMESTAMP"),
-                            TIME = each Cast(Quote(Time.ToText(_, "HH:mm:ss.sssssss")), "TIME")
-                        ]
+                        // A logical (true/false) that sets whether to view the tables grouped by their schema names
+                        HierarchicalNavigation = true,
+                        // A logical value that controls whether or not the connector shows generated SQL statements in the Power Query user experience.
+                        HideNativeQuery = true,
+                        // Allows upconversion of numeric types
+                        SoftNumbers = true,
+                        // Allow upconversion / resizing of numeric and string types
+                        TolerateConcatOverflow = true,
+                        // Enables connection pooling via the system ODBC manager
+                        ClientConnectionPooling = true,
+                        // These values should be set by previous steps
+                        CredentialConnectionString = CredentialConnectionString,
+                        SqlCapabilities = SqlCapabilities,
+                        SQLColumns = SQLColumns,
+                        SQLGetInfo = SQLGetInfo,
+                        SQLGetTypeInfo = SQLGetTypeInfo,
+                        UseEmbeddedDriver = true
+                    ]
+                ) catch (e) =>
+                    let
+                        errorMessage = e[Message],
+                        // check if the error is related to missing driver, if so add a link for installation, else raise the error as is
+                        customErrorMessageToAdd =
+                            if Text.Contains(errorMessage, "doesn't correspond to an installed ODBC driver") then
+                                " Please visit the installation guide: https://docs.snowflake.com/en/developer-guide/odbc/odbc-windows."
+                            else
+                                ""
                     in
-                        (typeInfo, ast) => Record.FieldOrDefault(Visitor, typeInfo[TYPE_NAME], each null)(ast[Value])
-                ],
-                // A logical (true/false) that sets whether to view the tables grouped by their schema names
-                HierarchicalNavigation = true,
-                // A logical value that controls whether or not the connector shows generated SQL statements in the Power Query user experience.
-                HideNativeQuery = true,
-                // Allows upconversion of numeric types
-                SoftNumbers = true,
-                // Allow upconversion / resizing of numeric and string types
-                TolerateConcatOverflow = true,
-                // Enables connection pooling via the system ODBC manager
-                ClientConnectionPooling = true,
-                // These values should be set by previous steps
-                CredentialConnectionString = CredentialConnectionString,
-                SqlCapabilities = SqlCapabilities,
-                SQLColumns = SQLColumns,
-                SQLGetInfo = SQLGetInfo,
-                SQLGetTypeInfo = SQLGetTypeInfo,
-                UseEmbeddedDriver = true
-            ]
-        ) 
-        catch (e)=>
-        let
-            errorMessage = e[Message],
-            // check if the error is related to missing driver, if so add a link for installation, else raise the error as is
-            customErrorMessageToAdd = if Text.Contains(errorMessage, "doesn't correspond to an installed ODBC driver") then " Please visit the installation guide: https://docs.snowflake.com/en/developer-guide/odbc/odbc-windows." else ""
-        in 
-            error Text.Combine({errorMessage, customErrorMessageToAdd}),
-        
-        // without this filter, the user will get all databases 
+                        error Text.Combine({errorMessage, customErrorMessageToAdd}),
+        // without this filter, the user will get all databases
         OdbcDatasourceForSelectedDatabase = Table.SelectRows(
-            OdbcDatasource, 
-            each (config <> null and Record.HasFields(config, "database") and config[database] <> null) 
-                and [Name] = config[database] 
-                or config = null or not Record.HasFields(config, "database") or config[database] = null
+            OdbcDatasource,
+            each
+                (config <> null and Record.HasFields(config, "database") and config[database] <> null)
+                and [Name] = config[database]
+                or config = null
+                or not Record.HasFields(config, "database")
+                or config[database] = null
         )
-
     in
         OdbcDatasourceForSelectedDatabase;
 
 // Data Source Kind description
-Snowflake = [
+Arbor = [
     // Set the TestConnection handler to enable gateway support.
     // The TestConnection handler will invoke your data source function to
     // validate the credentials the user has provider. Ideally, this is not
@@ -691,11 +790,9 @@ Snowflake = [
     // to the specified data source function.
     TestConnection = (dataSourcePath) =>
         let
-            json = Json.Document(dataSourcePath),
-            server = json[server],
-            warehouse = json[warehouse]
+            json = Json.Document(dataSourcePath), server = json[server], warehouse = json[warehouse]
         in
-            {"Snowflake.Database", server, warehouse},
+            {"Arbor.Database", server, warehouse},
     // Set supported types of authentication
     Authentication = [
         //Windows = [],
@@ -706,27 +803,24 @@ Snowflake = [
 ];
 
 // Data Source UI publishing description
-Snowflake.Publish = [
+Arbor.Publish = [
     Beta = true,
     Category = "Database",
     ButtonText = {Extension.LoadString("ButtonTitle"), Extension.LoadString("ButtonHelp")},
     LearnMoreUrl = "https://learn.microsoft.com/en-us/power-query/connectors/snowflake",
     SupportsDirectQuery = Config_EnableDirectQuery,
-    SourceImage = Snowflake.Icons,
-    SourceTypeImage = Snowflake.Icons,
+    SourceImage = Arbor.Icons,
+    SourceTypeImage = Arbor.Icons,
     NativeQueryProperties = [
         navigationSteps = {
             [
-                indices = {
-                    [
-                        value = "database",
-                        indexName = "Name"
-                    ],
-                    [
-                        displayName = "Database",
-                        indexName = "Kind"
-                    ]
-                },
+                indices = {[
+                    value = "database",
+                    indexName = "Name"
+                ], [
+                    displayName = "Database",
+                    indexName = "Kind"
+                ]},
                 access = "Data"
             ]
         },
@@ -736,22 +830,20 @@ Snowflake.Publish = [
     ]
 ];
 
-Snowflake.Icons = [
+Arbor.Icons = [
     Icon16 = {
-        Extension.Contents("SnowflakeConnector16.png"),
-        Extension.Contents("SnowflakeConnector20.png"),
-        Extension.Contents("SnowflakeConnector24.png"),
-        Extension.Contents("SnowflakeConnector32.png")
+        Extension.Contents("ArborConnector16.png"),
+        Extension.Contents("ArborConnector20.png"),
+        Extension.Contents("ArborConnector24.png"),
+        Extension.Contents("ArborConnector32.png")
     },
     Icon32 = {
-        Extension.Contents("SnowflakeConnector32.png"),
-        Extension.Contents("SnowflakeConnector40.png"),
-        Extension.Contents("SnowflakeConnector48.png"),
-        Extension.Contents("SnowflakeConnector64.png")
+        Extension.Contents("ArborConnector32.png"),
+        Extension.Contents("ArborConnector40.png"),
+        Extension.Contents("ArborConnector48.png"),
+        Extension.Contents("ArborConnector64.png")
     }
 ];
-
-
 
 // build settings based on configuration variables
 BuildOdbcConfig = () as record =>

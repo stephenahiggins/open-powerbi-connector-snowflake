@@ -403,5 +403,5 @@ FodyWeavers.xsd
 *.ipr
 
 .DS_Store
-SnowflakeConnector.query.pq
+ArborConnector.query.pq
 /static/PBIT.*

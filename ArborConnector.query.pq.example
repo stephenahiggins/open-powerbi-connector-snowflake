@@ -1,7 +1,7 @@
 ﻿let
     // Retrieve server and warehouse values from JSON
-    server = "contoso.snowflakecomputing.com",
-    warehouse = "CONTOSO_WH",
+    server = "xs48132.eu-west-2.aws.snowflakecomputing.com",
+    warehouse = "POWER_BI_GENERAL",
 
     // Define additional options
     options = [
@@ -18,7 +18,7 @@
     ],
 
     // Call Snowflake.Database with sourced parameters
-    result = Snowflake.Database(
+    result = Arbor.Database(
         server,
         warehouse,
         config

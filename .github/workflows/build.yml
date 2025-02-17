@@ -28,5 +28,5 @@ jobs:
       - name: Upload compiled extension
         uses: actions/upload-artifact@v4
         with:
-          name: open-powerbi-connector-snowflake-${{ github.sha }}.mez
-          path: ./bin/AnyCPU/Debug/open-powerbi-connector-snowflake.mez
+          name: Arbor-PowerBI-Connector-${{ github.sha }}.mez
+          path: ./bin/AnyCPU/Debug/Arbor-PowerBI-Connector.mez
